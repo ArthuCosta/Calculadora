@@ -1,0 +1,152 @@
+using System;
+using System.Collections.Generic;
+using System.Data;
+
+class Calculadora
+{
+    static List<string> historico = new List<string>();
+
+    static void Main()
+    {
+        while (true)
+        {
+            Console.Clear();
+            Console.WriteLine("=== Calculadora SENAI 4.0 ===");
+            Console.WriteLine("1 - Somar");
+            Console.WriteLine("2 - Subtrair");
+            Console.WriteLine("3 - Multiplicar");
+            Console.WriteLine("4 - Dividir");
+            Console.WriteLine("5 - Limpar Tela");
+            Console.WriteLine("6 - Histórico (últimas 5 operações)");
+            Console.WriteLine("7 - Expressão com Parênteses");
+            Console.WriteLine("8 - Raiz Quadrada");
+            Console.WriteLine("9 - Sair");
+            Console.Write("\nEscolha uma opção: ");
+
+            string opcao = Console.ReadLine();
+
+            switch (opcao)
+            {
+                case "1":
+                    OperacaoBasica("+");
+                    break;
+                case "2":
+                    OperacaoBasica("-");
+                    break;
+                case "3":
+                    OperacaoBasica("*");
+                    break;
+                case "4":
+                    OperacaoBasica("/");
+                    break;
+                case "5":
+                    Console.Clear();
+                    Console.WriteLine("Tela limpa!");
+                    Console.ReadKey();
+                    break;
+                case "6":
+                    MostrarHistorico();
+                    break;
+                case "7":
+                    CalcularExpressao();
+                    break;
+                case "8":
+                    CalcularRaiz();
+                    break;
+                case "9":
+                    return;
+                default:
+                    Console.WriteLine("Opção inválida!");
+                    Console.ReadKey();
+                    break;
+            }
+        }
+    }
+
+    static void OperacaoBasica(string operador)
+    {
+        Console.Write("Digite o primeiro número: ");
+        double num1 = double.Parse(Console.ReadLine());
+
+        Console.Write("Digite o segundo número: ");
+        double num2 = double.Parse(Console.ReadLine());
+
+        double resultado = 0;
+
+        switch (operador)
+        {
+            case "+": resultado = num1 + num2; break;
+            case "-": resultado = num1 - num2; break;
+            case "*": resultado = num1 * num2; break;
+            case "/":
+                if (num2 == 0)
+                {
+                    Console.WriteLine("Erro: Divisão por zero não permitida.");
+                    Console.ReadKey();
+                    return;
+                }
+                resultado = num1 / num2;
+                break;
+        }
+
+        Console.WriteLine($"Resultado: {resultado}");
+        historico.Add($"{num1} {operador} {num2} = {resultado}");
+        if (historico.Count > 5) historico.RemoveAt(0);
+        Console.ReadKey();
+    }
+
+    static void MostrarHistorico()
+    {
+        Console.WriteLine("Últimas operações:");
+        if (historico.Count == 0)
+        {
+            Console.WriteLine("Nenhuma operação realizada.");
+        }
+        else
+        {
+            foreach (var item in historico)
+                Console.WriteLine(item);
+        }
+        Console.ReadKey();
+    }
+
+    static void CalcularExpressao()
+    {
+        Console.Write("Digite a expressão (use parênteses): ");
+        string expressao = Console.ReadLine();
+
+        try
+        {
+            var resultado = new DataTable().Compute(expressao, "");
+            Console.WriteLine($"Resultado: {resultado}");
+            historico.Add($"{expressao} = {resultado}");
+            if (historico.Count > 5) historico.RemoveAt(0);
+        }
+        catch
+        {
+            Console.WriteLine("Expressão inválida!");
+        }
+
+        Console.ReadKey();
+    }
+
+    static void CalcularRaiz()
+    {
+        Console.Write("Digite o número: ");
+        double numero = double.Parse(Console.ReadLine());
+
+        if (numero < 0)
+        {
+            Console.WriteLine("Erro: não é possível calcular raiz quadrada de número negativo!");
+        }
+        else
+        {
+            double resultado = Math.Sqrt(numero);
+            Console.WriteLine($"Raiz quadrada de {numero} = {resultado}");
+            historico.Add($"√{numero} = {resultado}");
+            if (historico.Count > 5) historico.RemoveAt(0);
+        }
+
+        Console.ReadKey();
+    }
+}
